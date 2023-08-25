@@ -58,6 +58,12 @@ class Book(models.Model):
     def __str__(self):
         return self.title
 
+    def display_author(self):
+        authors = [author.last_name for author in self.author.all()]
+        return ', '.join(authors)
+
+    display_author.short_description = 'Авторы'
+
     def get_absolute_url(self):
         """Возвращает URL-aдpec для доступа к определенному экземпляру книги"""
         return reverse('book-detail', args=[str(self.id)])
