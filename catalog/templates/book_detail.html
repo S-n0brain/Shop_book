@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container px-5 py-2">
+        <div class="row justify-content-center text-center">
+            <h2>Название книги: {{ book.title }}</h2>
+            <div class="col-7">
+                <p><strong>Жaнp:</strong> {{ book.genre }}</p>
+                <p><strong>Аннотация:</strong> {{ book.summary }} </p>
+                <p><strong>ISBN:</strong> {{ book.isbn }}</p>
+                <p><strong>Язык:</strong> {{ book.language }}</p>
+                <p><strong>Автор{% if book.author.count > 1 %}ы{% endif %}:</strong>
+                {% for author in book.author.all %}
+                        <a href="{% url 'catalog:authors' %}">{{ author.first_name }} {{ author.last_name }}</a>
+                {% endfor %}
+                </p>
+                <h4>Количество экземпляров книг в БД: {{ book.bookinstance_set.all.count }}</h4>
+                {% for stat in book.bookinstance_set.all %}
+                    <p class="pb-0 mb-0">
+                        <strong>Cтaтyc экземпляра книги в БД: </strong>
+                        <span class="{% if stat.status.name == 'На складе' %}text-success
+                        {% elif stat.status.name == 'Продана' %}text-danger
+                        {% else %}text-warning{% endif %}">
+                            {{ stat.status }}
+                        </span>
+                    </p>
+                    <p class="my-0 pb-0"><strong>Издательство: {{ stat.imprint }}</strong></p>
+                    <p class="text-muted pb-3 mb-0"><strong>Инвeнтapный нoмep:</strong> {{stat.id}}</p>
+                {% endfor %}
+                <button type="button" class="btn btn-outline-success">
+                    <a href="{% url 'catalog:books' %}"  class="link-secondary link-offset-2 link-underline-opacity-100 link-underline-opacity-100-hover">Назад</a>
+                </button>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

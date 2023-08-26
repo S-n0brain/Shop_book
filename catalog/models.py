@@ -66,7 +66,7 @@ class Book(models.Model):
 
     def get_absolute_url(self):
         """Возвращает URL-aдpec для доступа к определенному экземпляру книги"""
-        return reverse('book-detail', args=[str(self.id)])
+        return reverse('catalog:book-detail', kwargs={'pk': str(self.id)})
 
 
 class Status(models.Model):

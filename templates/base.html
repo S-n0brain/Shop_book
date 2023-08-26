@@ -1,47 +1,7 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Мир книг{% endblock %}</title>
-    {% load django_bootstrap5 %}
-    {% bootstrap_css %}
-    {% bootstrap_javascript %}
-<! -- Добавление статического СSS-файла -->
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
-    {% block header %}
-        <header class="container-fluid bg-light">
-        <div class="container">
-            <nav class="navbar navbar-expand-lg">
-              <div class="container-fluid">
-                <a class="navbar-brand h1" href="#">Мир книг</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Переключатель навигации">
-                  <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                  <ul class="navbar-nav">
-                    <li class="nav-item">
-                      <a class="nav-link active" aria-current="page" href="#">Все книги</a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="#">Все авторы</a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </nav>
-        </div>
-        </header>
-    {% endblock %}
+    {% include 'include/header.html' %}
 
     {% block content %}{% endblock %}
-    {% block footer %}
-        {% block copyright %}
-            <p>Copyright ООО "Люди и книги", 2023. Все права защищены</p>
-        {% endblock %}
-    {% endblock %}
-</body>
-</html>
+
+    {% include 'include/pagination.html' %}
+
+    {% include 'include/footer.html' %}

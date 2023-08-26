@@ -1,0 +1,13 @@
+header {
+    border-bottom: #dd9710 3px solid;
+}
+.img-logo {
+    width: 50px;
+}
+.list_book {
+    font-size: 24px;
+    list-style: circle;
+}
+.list_book > li > a {
+    margin-right: 30px;
+}
