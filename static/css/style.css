@@ -11,3 +11,15 @@ header {
 .list_book > li > a {
     margin-right: 30px;
 }
+.errorlist {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 10px 0;
+}
+.errorlist >li {
+    padding: 0;
+    margin: 10px 0 10px 0;
+    color: red;
+    font-size: 26px;
+    font-style: italic;
+}

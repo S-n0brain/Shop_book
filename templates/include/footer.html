@@ -1,16 +1,24 @@
-    {% block footer %}
+{% block footer %}
     <footer class="container-fluid bg-light">
-    <div class="container px-5">
-    <div class="row justify-content-center">
-        <div class="col-4 text-center">
-            {% block copyright %}
-                <p>Copyright ООО "Люди и книги", 2023. Все права защищены</p>
-            {% endblock %}
+        <div class="container px-5">
+            <div class="row justify-content-evenly">
+                <div class="col-4 text-center align-items-center">
+                    {% block copyright %}
+                        <p>Copyright ООО "Люди и книги", 2023. Все права защищены</p>
+                    {% endblock %}
+                </div>
+                <div class="col-3 align-self-center text-end">
+                    {% block now_user %}
+                        {% if user.is_authenticated %}
+                            <p class="h5">{{ user.username }}</p>
+                        {% else %}
+                            <p class="h5">Не авторизованы</p>
+                        {% endif %}
+                    {% endblock %}
+                </div>
+            </div>
         </div>
-    </div>
-    </div>
     </footer>
-
-    {% endblock %}
+{% endblock %}
 </body>
 </html>

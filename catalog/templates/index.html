@@ -7,15 +7,16 @@
         в качестве учебного примера с использованием PyCharrn.</p>
     </div>
     <div class="container px-5 py-2">
-    <h2>Динамический контент</h2>
-    <p>База данных сайта Мир книг содержит следующее
-        количество записей :</p>
-    <ul>
-        <li><strong>Кол-во книг: {{ num_books }}</strong></li>
-        <li><strong>Koличecтвo экземпляров книг: {{ num_instance }}</strong></li>
-        <li><strong>Koличecтвo экземпляров книг на складе: {{ num_instances_available }}</strong></li>
-        <li><strong>Koличecтвo авторов книг: {{ num_authors }}</strong></li>
-    </ul>
+        <h2>Динамический контент</h2>
+        <p>База данных сайта Мир книг содержит следующее
+            количество записей :</p>
+        <ul>
+            <li><strong>Кол-во книг: {{ num_books }}</strong></li>
+            <li><strong>Koличecтвo экземпляров книг: {{ num_instance }}</strong></li>
+            <li><strong>Koличecтвo экземпляров книг на складе: {{ num_instances_available }}</strong></li>
+            <li><strong>Koличecтвo авторов книг: {{ num_authors }}</strong></li>
+        </ul>
+        <p class="h6 text-end">Количество посещений данной страницы: {{ num_visits }}</p>
     </div>
 
 {% endblock content %}

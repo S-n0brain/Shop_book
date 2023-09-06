@@ -11,13 +11,20 @@ def index(request):
     num_instances_available = BookInstance.objects.filter(status__name__exact='На складе').count()
     # Авторы книг
     num_authors = Author.objects.all().count()
+
+    num_visits = request.session.get('num_visits', 0)
+    request.session['num_visits'] = num_visits + 1
+
     req = request.get_full_path()
-    print(req)
+    print(f'full path: {req}')
+
+
     return render(request=request, template_name='index.html',
                   context={'num_books': num_books,
                            'num_instance': num_instance,
                            'num_instances_available': num_instances_available,
-                           'num_authors': num_authors})
+                           'num_authors': num_authors,
+                           'num_visits': num_visits})
 
 
 class BookListView(ListView):
@@ -38,6 +45,6 @@ class AuthorListView(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         print(self.request.get_full_path())
-        context = super().get_context_data(**kwargs)
+        context = ListView.get_context_data(self, **kwargs)
         print(context)
         return context
