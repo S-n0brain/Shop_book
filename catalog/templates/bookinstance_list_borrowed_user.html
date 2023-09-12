@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container px-5 py-3">
+        <div class="row justify-content-center">
+            <div class="col-7">
+                <p class="h1">Взятые книги</p>
+                {% if bookinstance_list %}
+                    {% for bookinstance in bookinstance_list %}
+                        <li class="{% if bookinstance.is_overdue %}text-danger{% endif %}">
+                            <a href="{% url 'catalog:book-detail' bookinstance.book.pk %}">
+                                {{ bookinstance.book.title }}
+                            </a> ({{ bookinstance.due_back }})
+                        </li>
+                    {% endfor %}
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,5 +1,7 @@
 from django.db import models
 from django.urls import reverse
+from django.contrib.auth.models import User
+from datetime import date
 
 
 class Genre(models.Model):
@@ -10,6 +12,10 @@ class Genre(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = 'Жанр'
+        verbose_name_plural = 'Жанры'
+
 
 class Language(models.Model):
     """Языки книг"""
@@ -18,6 +24,10 @@ class Language(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = 'Язык'
+        verbose_name_plural = 'Языки'
 
 
 class Author(models.Model):
@@ -33,6 +43,10 @@ class Author(models.Model):
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
+
+    class Meta:
+        verbose_name = 'Автор'
+        verbose_name_plural = 'Авторы'
 
 
 class Book(models.Model):
@@ -64,6 +78,10 @@ class Book(models.Model):
 
     display_author.short_description = 'Авторы'
 
+    class Meta:
+        verbose_name = 'Книга'
+        verbose_name_plural = 'Книги'
+
     def get_absolute_url(self):
         """Возвращает URL-aдpec для доступа к определенному экземпляру книги"""
         return reverse('catalog:book-detail', kwargs={'pk': str(self.id)})
@@ -76,6 +94,10 @@ class Status(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = 'Статус'
+        verbose_name_plural = 'Статусы'
 
 
 class BookInstance(models.Model):
@@ -92,9 +114,20 @@ class BookInstance(models.Model):
                                verbose_name="Cтaтyc экземпляра книги")
     due_back = models.DateField(null=True, blank=True, help_text="Введите конец срока статуса",
                                 verbose_name="Дaтa окончания статуса")
+    borrower = models.ForeignKey(User, on_delete=models.SET_NULL,
+                                 null=True, blank=True, verbose_name='Заказчик',
+                                 help_text='Выберите заказчика книги')
+
+    @property
+    def is_overdue(self):
+        if self.due_back and date.today() > self.due_back:
+            return True
+        return False
 
     class Meta:
         ordering = ['due_back']
+        verbose_name = 'Экземпляр книги'
+        verbose_name_plural = 'Экземпляры книг'
 
     def __str__(self):
         return f'{self.inv_nom} {self.book} {self.status}'

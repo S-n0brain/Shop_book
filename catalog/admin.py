@@ -26,8 +26,8 @@ class BookAdmin(admin.ModelAdmin):
 
 @admin.register(BookInstance)
 class BookInstanceAdmin(admin.ModelAdmin):
-    list_display = ['book', 'status', 'due_back']
-    list_filter = ['book', 'status']
+    list_display = ['book', 'status', 'due_back',  'borrower']
+    list_filter = ['book', 'status',  'borrower']
     fieldsets = [['Экземпляр книги',
                   {
                       'fields': [('book', 'imprint'), 'inv_nom']
@@ -35,7 +35,7 @@ class BookInstanceAdmin(admin.ModelAdmin):
                  [
                      'Статус и окончание его действия',
                      {
-                         'fields': ['status', 'due_back']
+                         'fields': ['status', 'due_back',  'borrower']
                      }
                  ]]
 

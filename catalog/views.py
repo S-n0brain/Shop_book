@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .models import Book, BookInstance, Author, Genre
 from django.views.generic import ListView, DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 def index(request):
@@ -17,7 +18,6 @@ def index(request):
 
     req = request.get_full_path()
     print(f'full path: {req}')
-
 
     return render(request=request, template_name='index.html',
                   context={'num_books': num_books,
@@ -48,3 +48,13 @@ class AuthorListView(ListView):
         context = ListView.get_context_data(self, **kwargs)
         print(context)
         return context
+
+
+class LoanedBooksByUserListView(LoginRequiredMixin, ListView):
+    model = BookInstance
+    template_name = 'bookinstance_list_borrowed_user.html'
+    paginate_by = 5
+
+    def get_queryset(self):
+        return BookInstance.objects.filter(borrower=self.request.user).filter(status__name='В заказе').order_by(
+            'due_back')
