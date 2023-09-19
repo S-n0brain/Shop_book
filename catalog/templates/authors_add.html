@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container px-5 py-3">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h3 class="text-center text-warning">Список авторов</h3>
+                <ol class="list-group">
+                    {% for author in page_object %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">{{ author.first_name }} {{ author.last_name }} ({{ author.id }})</div>
+                                <span>Родился: {{ author.date_of_birth|date:'d M Y' }}</span>
+                                {% if author.date_of_death %}
+                                    <br>
+                                    <span>Умер: {{ author.date_of_death|date:'d M Y' }}</span>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <a href="{% url 'catalog:edit' author.pk %}"><button type="button" class="btn btn-sm btn-outline-warning me-2">Изменить</button></a>
+                                <a href="{% url 'catalog:delete' author.pk %}"><button type="button" class="btn btn-sm btn-outline-danger ms-2">Удалить</button></a>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ol>
+            </div>
+            <div class="col-8">
+                <h3 class="text-center text-warning mt-4">Добавить автора</h3>
+                <form action="{% url 'catalog:create' %}" method="post"
+                      class="border border-3 rounded-3 border-info my-3">
+                    {% csrf_token %}
+                    <div class="input-group my-3 px-1 px-lg-5">
+                        <span class="input-group-text">Имя и фамилия автора</span>
+                        <input type="text" name="first_name" aria-label="Имя" class="form-control" required>
+                        <input type="text" name="last_name" aria-label="Фамилия" class="form-control" required>
+                    </div>
+                    <div class="row my-3 mx-2">
+                        <div class="col-lg py-3 py-sm-3 py-md-3 py-lg-0">
+                            <input type="date" name="date_of_birth" class="form-control" required>
+                        </div>
+                        <div class="col-lg py-3 py-sm-3 py-md-3 py-lg-0">
+                            <input type="date" name="date_of_death" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row justify-content-center py-3">
+                        <div class="col text-center">
+                            <button type="submit" class="btn btn-warning">Добавить</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% if page_object.paginator %}
+        <div class="container px-5">
+            <nav>
+                <ul class="pagination justify-content-end">
+                    {% if page_object.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}">Предыдущая</a>
+                        </li>
+                    {% endif %}
+                    {% for p in page_object.paginator %}
+                        <li class="page-item"><a
+                                class="page-link {% if p.number == page_object.number %}active{% endif %} "
+                                href="{{ request.path }}?page={{ p.number }}">{{ p.number }}</a></li>
+                    {% endfor %}
+                    {% if page_object.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ request.path }}?page={{ page_object.next_page_number }}">Следующая</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    {% endif %}
+{% endblock %}

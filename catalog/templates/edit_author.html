@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container mx-5">
+        <div class="row justify-content-center">
+            <div class="col-8">
+                <h3 class="text-center text-warning mt-4">Изменить автора</h3>
+                <form action="{% url 'catalog:edit' author.pk %}" method="post"
+                      class="border border-3 rounded-3 border-info my-3">
+                    {% csrf_token %}
+                    <div class="input-group my-3 px-1 px-lg-5">
+                        <span class="input-group-text">Имя и фамилия автора</span>
+                        <input type="text" name="first_name" aria-label="Имя" class="form-control" required>
+                        <input type="text" name="last_name" aria-label="Фамилия" class="form-control" required>
+                    </div>
+                    <div class="row my-3 mx-2">
+                        <div class="col-lg py-3 py-sm-3 py-md-3 py-lg-0">
+                            <input type="date" name="date_of_birth" class="form-control" required>
+                        </div>
+                        <div class="col-lg py-3 py-sm-3 py-md-3 py-lg-0">
+                            <input type="date" name="date_of_death" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row justify-content-center py-3">
+                        <div class="col text-center">
+                            <button type="submit" class="btn btn-warning">Изменить</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

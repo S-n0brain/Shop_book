@@ -1,7 +1,12 @@
-from django.shortcuts import render
+import datetime
+
+from django.core.paginator import Paginator
+from django.http import HttpResponseNotFound
+from django.shortcuts import render, redirect
 from .models import Book, BookInstance, Author, Genre
 from django.views.generic import ListView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from .forms import AuthorsForm
 
 
 def index(request):
@@ -58,3 +63,54 @@ class LoanedBooksByUserListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return BookInstance.objects.filter(borrower=self.request.user).filter(status__name='В заказе').order_by(
             'due_back')
+
+
+def authors_add(request, flag=False):
+    flag_error = flag
+    authors = Author.objects.all()
+    pagin_authors = Paginator(authors, per_page=3)
+    page_number = request.GET.get('page')
+    page_obj = pagin_authors.get_page(page_number)
+    return render(request, template_name='authors_add.html',
+                  context={"authors": authors, 'page_object': page_obj})
+
+
+def create_author(request):
+    if request.method == 'POST':
+        author = Author()
+        author.first_name = request.POST.get('first_name')
+        author.last_name = request.POST.get('last_name')
+        author.date_of_birth = request.POST.get('date_of_birth')
+        author.date_of_death = request.POST.get('date_of_death')
+        if author.date_of_death == '':
+            author.date_of_death = None
+        author.save()
+        return redirect('catalog:authors-add')
+
+
+def delete_author(request, pk):
+    flag_error = False
+    try:
+        author = Author.objects.get(pk=pk)
+    except Author.DoesNotExist:
+        return HttpResponseNotFound("""<script>
+                alert('Такого id автора не существует!')
+                </script>""")
+    else:
+        author.delete()
+        return redirect('catalog:authors-add')
+
+
+def edit_author(request, pk):
+    author = Author.objects.get(pk=pk)
+    if request.method == 'POST':
+        author.first_name = request.POST.get('first_name')
+        author.last_name = request.POST.get('last_name')
+        author.date_of_birth = request.POST.get('date_of_birth')
+        author.date_of_death = request.POST.get('date_of_death')
+        if author.date_of_death == '':
+            author.date_of_death = None
+        author.save()
+        return redirect('catalog:authors-add')
+    else:
+        return render(request, template_name='edit_author.html', context={'author': author})
