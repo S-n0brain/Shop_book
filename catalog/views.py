@@ -6,7 +6,6 @@ from django.shortcuts import render, redirect
 from .models import Book, BookInstance, Author, Genre
 from django.views.generic import ListView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .forms import AuthorsForm
 
 
 def index(request):
@@ -65,8 +64,7 @@ class LoanedBooksByUserListView(LoginRequiredMixin, ListView):
             'due_back')
 
 
-def authors_add(request, flag=False):
-    flag_error = flag
+def authors_add(request):
     authors = Author.objects.all()
     pagin_authors = Paginator(authors, per_page=3)
     page_number = request.GET.get('page')
@@ -84,12 +82,14 @@ def create_author(request):
         author.date_of_death = request.POST.get('date_of_death')
         if author.date_of_death == '':
             author.date_of_death = None
-        author.save()
-        return redirect('catalog:authors-add')
+        if author.date_of_birth > author.date_of_death:
+            return redirect('catalog:authors-add')
+        else:
+            author.save()
+            return redirect('catalog:authors-add')
 
 
 def delete_author(request, pk):
-    flag_error = False
     try:
         author = Author.objects.get(pk=pk)
     except Author.DoesNotExist:
@@ -110,7 +110,10 @@ def edit_author(request, pk):
         author.date_of_death = request.POST.get('date_of_death')
         if author.date_of_death == '':
             author.date_of_death = None
-        author.save()
-        return redirect('catalog:authors-add')
+        if author.date_of_birth > author.date_of_death:
+            return redirect('catalog:edit', pk=author.pk)
+        else:
+            author.save()
+            return redirect('catalog:authors-add')
     else:
         return render(request, template_name='edit_author.html', context={'author': author})

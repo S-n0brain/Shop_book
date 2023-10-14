@@ -23,3 +23,6 @@ header {
     font-size: 26px;
     font-style: italic;
 }
+.a_button {
+    text-decoration-line: none;
+}
