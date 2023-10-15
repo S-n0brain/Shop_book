@@ -1,11 +1,11 @@
-import datetime
-
 from django.core.paginator import Paginator
 from django.http import HttpResponseNotFound
 from django.shortcuts import render, redirect
 from .models import Book, BookInstance, Author, Genre
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
+from .forms import BookForm
 
 
 def index(request):
@@ -40,6 +40,7 @@ class BookListView(ListView):
 class BookDetailView(DetailView):
     model = Book
     template_name = 'book_detail.html'
+
 
 
 class AuthorListView(ListView):
@@ -117,3 +118,25 @@ def edit_author(request, pk):
             return redirect('catalog:authors-add')
     else:
         return render(request, template_name='edit_author.html', context={'author': author})
+
+
+class BookCreateView(CreateView):
+    model = Book
+    form_class = BookForm
+    success_url = reverse_lazy('catalog:books')
+    template_name = 'book_form.html'
+
+
+class BookUpdateView(UpdateView):
+    model = Book
+    form_class = BookForm
+    template_name = 'book_form.html'
+    success_url = reverse_lazy('catalog:books')
+
+
+class BookDeleteView(DeleteView):
+    model = Book
+    form_class = BookForm
+    success_url = reverse_lazy('catalog:books')
+    template_name = 'book_confirm_delete.html'
+

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container my-3">
+        <div class="row justify-content-center">
+            <div class="col-md-10 align-item-center text-center">
+                <form action="" method="post">
+                    <div class="row row-cols-2">
+                    {% csrf_token %}
+                        {% for f in form %}
+                            <div class="col p-3">
+                                <div class="my-1" style="font-size: 18px; color: blue">{{ f.label }}</div>
+                                {{ f }}
+                                <div class="my-1" style="font-size: 18px; color: blue">{{ f.help_text }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <button class="btn btn-warning my-3" type="submit">Добавить книгу</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
