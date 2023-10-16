@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from .models import Book, BookInstance, Author, Genre
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from .forms import BookForm
 
 
@@ -19,9 +19,6 @@ def index(request):
 
     num_visits = request.session.get('num_visits', 0)
     request.session['num_visits'] = num_visits + 1
-
-    req = request.get_full_path()
-    print(f'full path: {req}')
 
     return render(request=request, template_name='index.html',
                   context={'num_books': num_books,
@@ -40,7 +37,6 @@ class BookListView(ListView):
 class BookDetailView(DetailView):
     model = Book
     template_name = 'book_detail.html'
-
 
 
 class AuthorListView(ListView):
@@ -131,7 +127,11 @@ class BookUpdateView(UpdateView):
     model = Book
     form_class = BookForm
     template_name = 'book_form.html'
-    success_url = reverse_lazy('catalog:books')
+
+    # success_url = reverse_lazy('catalog:books')
+
+    def get_success_url(self, **kwargs):
+        return reverse('catalog:book-detail', kwargs={self.pk_url_kwarg: self.kwargs['pk']})
 
 
 class BookDeleteView(DeleteView):
@@ -139,4 +139,3 @@ class BookDeleteView(DeleteView):
     form_class = BookForm
     success_url = reverse_lazy('catalog:books')
     template_name = 'book_confirm_delete.html'
-
