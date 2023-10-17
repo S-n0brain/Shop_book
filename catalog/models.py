@@ -47,7 +47,7 @@ class Author(models.Model):
     class Meta:
         verbose_name = 'Автор'
         verbose_name_plural = 'Авторы'
-
+        ordering = ['-id']
 
 class Book(models.Model):
     """Книги"""

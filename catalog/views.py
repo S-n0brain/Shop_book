@@ -1,11 +1,16 @@
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.http import HttpResponseNotFound
+from django.http import HttpResponseNotFound, HttpResponse
 from django.shortcuts import render, redirect
 from .models import Book, BookInstance, Author, Genre
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy, reverse
 from .forms import BookForm
+
+
+def error_404(request, exception):
+    return render(request, '404.html')
 
 
 def index(request):
@@ -45,9 +50,7 @@ class AuthorListView(ListView):
     paginate_by = 2
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        print(self.request.get_full_path())
         context = ListView.get_context_data(self, **kwargs)
-        print(context)
         return context
 
 
@@ -61,6 +64,7 @@ class LoanedBooksByUserListView(LoginRequiredMixin, ListView):
             'due_back')
 
 
+@login_required
 def authors_add(request):
     authors = Author.objects.all()
     pagin_authors = Paginator(authors, per_page=3)
@@ -69,7 +73,7 @@ def authors_add(request):
     return render(request, template_name='authors_add.html',
                   context={"authors": authors, 'page_object': page_obj})
 
-
+@login_required
 def create_author(request):
     if request.method == 'POST':
         author = Author()
@@ -85,7 +89,7 @@ def create_author(request):
             author.save()
             return redirect('catalog:authors-add')
 
-
+@login_required
 def delete_author(request, pk):
     try:
         author = Author.objects.get(pk=pk)
@@ -97,7 +101,7 @@ def delete_author(request, pk):
         author.delete()
         return redirect('catalog:authors-add')
 
-
+@login_required
 def edit_author(request, pk):
     author = Author.objects.get(pk=pk)
     if request.method == 'POST':
@@ -116,14 +120,14 @@ def edit_author(request, pk):
         return render(request, template_name='edit_author.html', context={'author': author})
 
 
-class BookCreateView(CreateView):
+class BookCreateView(LoginRequiredMixin, CreateView):
     model = Book
     form_class = BookForm
     success_url = reverse_lazy('catalog:books')
     template_name = 'book_form.html'
 
 
-class BookUpdateView(UpdateView):
+class BookUpdateView(LoginRequiredMixin, UpdateView):
     model = Book
     form_class = BookForm
     template_name = 'book_form.html'
@@ -134,7 +138,7 @@ class BookUpdateView(UpdateView):
         return reverse('catalog:book-detail', kwargs={self.pk_url_kwarg: self.kwargs['pk']})
 
 
-class BookDeleteView(DeleteView):
+class BookDeleteView(LoginRequiredMixin, DeleteView):
     model = Book
     form_class = BookForm
     success_url = reverse_lazy('catalog:books')

@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1 class="text-center mt-5">Ошибка 404</h1>
+    <h3 class="mb-5 text-center">Страница не найдена</h3>
+    <h3 class="mb-5 text-center"><a href="{% url 'catalog:index' %}">Перейти на главную</a></h3>
+{% endblock %}
