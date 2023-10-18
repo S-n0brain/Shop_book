@@ -6,7 +6,7 @@ from .models import Book, BookInstance, Author, Genre
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy, reverse
-from .forms import BookForm
+from .forms import BookForm, GenreForm
 
 
 def error_404(request, exception):
@@ -25,7 +25,7 @@ def index(request):
     num_visits = request.session.get('num_visits', 0)
     request.session['num_visits'] = num_visits + 1
 
-    return render(request=request, template_name='index.html',
+    return render(request=request, template_name='catalog/index.html',
                   context={'num_books': num_books,
                            'num_instance': num_instance,
                            'num_instances_available': num_instances_available,
@@ -35,18 +35,28 @@ def index(request):
 
 class BookListView(ListView):
     model = Book
-    template_name = 'book_list.html'
+    template_name = 'catalog/book_list.html'
     paginate_by = 3
 
 
 class BookDetailView(DetailView):
     model = Book
-    template_name = 'book_detail.html'
+    template_name = 'catalog/book_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = DetailView.get_context_data(self, **kwargs)
+        if self.request.user.is_authenticated:
+            user_bookinstance = BookInstance.objects.filter(book_id=self.kwargs['pk']).filter(
+                borrower=self.request.user).filter(status__name='В заказе')
+            if user_bookinstance:
+                context['bk'] = user_bookinstance
+            context['user_name'] = self.request.user
+        return context
 
 
 class AuthorListView(ListView):
     model = Author
-    template_name = 'author_list.html'
+    template_name = 'catalog/author_list.html'
     paginate_by = 2
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -56,7 +66,7 @@ class AuthorListView(ListView):
 
 class LoanedBooksByUserListView(LoginRequiredMixin, ListView):
     model = BookInstance
-    template_name = 'bookinstance_list_borrowed_user.html'
+    template_name = 'catalog/bookinstance_list_borrowed_user.html'
     paginate_by = 5
 
     def get_queryset(self):
@@ -70,8 +80,9 @@ def authors_add(request):
     pagin_authors = Paginator(authors, per_page=3)
     page_number = request.GET.get('page')
     page_obj = pagin_authors.get_page(page_number)
-    return render(request, template_name='authors_add.html',
+    return render(request, template_name='catalog/authors_add.html',
                   context={"authors": authors, 'page_object': page_obj})
+
 
 @login_required
 def create_author(request):
@@ -89,6 +100,7 @@ def create_author(request):
             author.save()
             return redirect('catalog:authors-add')
 
+
 @login_required
 def delete_author(request, pk):
     try:
@@ -100,6 +112,7 @@ def delete_author(request, pk):
     else:
         author.delete()
         return redirect('catalog:authors-add')
+
 
 @login_required
 def edit_author(request, pk):
@@ -117,22 +130,20 @@ def edit_author(request, pk):
             author.save()
             return redirect('catalog:authors-add')
     else:
-        return render(request, template_name='edit_author.html', context={'author': author})
+        return render(request, template_name='catalog/edit_author.html', context={'author': author})
 
 
 class BookCreateView(LoginRequiredMixin, CreateView):
     model = Book
     form_class = BookForm
     success_url = reverse_lazy('catalog:books')
-    template_name = 'book_form.html'
+    template_name = 'catalog/book_form.html'
 
 
 class BookUpdateView(LoginRequiredMixin, UpdateView):
     model = Book
     form_class = BookForm
-    template_name = 'book_form.html'
-
-    # success_url = reverse_lazy('catalog:books')
+    template_name = 'catalog/book_form.html'
 
     def get_success_url(self, **kwargs):
         return reverse('catalog:book-detail', kwargs={self.pk_url_kwarg: self.kwargs['pk']})
@@ -140,6 +151,23 @@ class BookUpdateView(LoginRequiredMixin, UpdateView):
 
 class BookDeleteView(LoginRequiredMixin, DeleteView):
     model = Book
-    form_class = BookForm
     success_url = reverse_lazy('catalog:books')
-    template_name = 'book_confirm_delete.html'
+    template_name = 'catalog/book_confirm_delete.html'
+
+
+class GenreListView(ListView):
+    model = Genre
+    template_name = 'catalog/genre_list.html'
+
+
+class GenreCreateView(LoginRequiredMixin, CreateView):
+    model = Genre
+    template_name = 'catalog/genre_form.html'
+    form_class = GenreForm
+    success_url = reverse_lazy('catalog:books')
+
+
+class GenreDeleteView(LoginRequiredMixin, DeleteView):
+    model = Genre
+    template_name = 'catalog/genre_confirm_delete.html'
+    success_url = reverse_lazy('catalog:books')

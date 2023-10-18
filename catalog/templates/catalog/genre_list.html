@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container mx-5 my-5">
+        <div class="row justify-content-center">
+            <div class="col-8">
+                <ul>
+                    {% for genre in genre_list %}
+                        <li class="my-2">
+                            {{ genre.name }}{% if user.is_authenticated %} |
+                            <a href="{% url 'catalog:genre_delete' genre.pk %}" class="btn btn-warning btn-sm">Удалить жанр</a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

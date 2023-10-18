@@ -49,6 +49,7 @@ class Author(models.Model):
         verbose_name_plural = 'Авторы'
         ordering = ['-id']
 
+
 class Book(models.Model):
     """Книги"""
     title = models.CharField(max_length=200,

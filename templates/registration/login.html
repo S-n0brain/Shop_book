@@ -19,10 +19,11 @@
                         <p class="h3"> Вы не имеете доступа к этой странице. Войдите в систему с другими параметрами</p>
                     {% else %}
                         <p class="h3"> Войдите в систему, чтобы увидеть эту страницу.</p>
+                        <a href="{% url 'login' %}" class="btn btn-primary my-4 btn-lg">Войти</a>
                     {% endif %}
                 </div>
             {% endif %}
-            <div class="{% if next and not user.is_authenticated %}d-none{% endif %} col-sm-12 col-md-8 col-lg-6 col-xxl-5 border border-3 border-warning rounded-3 shadow-lg">
+            <div class="{% if next %}d-none{% endif %} col-sm-12 col-md-8 col-lg-6 col-xxl-5 border border-3 border-warning rounded-3 shadow-lg">
                 <form action="{% url 'login' %}" method="post">
                     {% csrf_token %}
                     <div class="form-text mx-3 mt-3 text-center"><strong>Введите логин и пароль</strong></div>

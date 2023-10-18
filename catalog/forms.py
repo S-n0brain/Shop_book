@@ -1,7 +1,7 @@
 from django import forms
 from datetime import date
 from django.forms import ModelForm
-from .models import Book
+from .models import *
 
 
 class AuthorsForm(forms.Form):
@@ -21,4 +21,13 @@ class BookForm(ModelForm):
 
     class Meta:
         model = Book
+        fields = '__all__'
+
+
+class GenreForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        ModelForm.__init__(self, *args, **kwargs)
+        self.fields['name'].widget.attrs.update({'placeholder': 'Введите жанр книги', 'class': 'form-control '})
+    class Meta:
+        model = Genre
         fields = '__all__'
