@@ -158,6 +158,7 @@ class BookDeleteView(LoginRequiredMixin, DeleteView):
 class GenreListView(ListView):
     model = Genre
     template_name = 'catalog/genre_list.html'
+    paginate_by = 3
 
 
 class GenreCreateView(LoginRequiredMixin, CreateView):
