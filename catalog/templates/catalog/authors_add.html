@@ -17,8 +17,10 @@
                                 {% endif %}
                             </div>
                             <div class="text-center">
-                                <a href="{% url 'catalog:edit' author.pk %}" class="btn btn-sm btn-outline-warning me-2">Изменить</a>
-                                <a href="{% url 'catalog:delete' author.pk %}" class="btn btn-sm btn-outline-danger ms-2">Удалить</a>
+                                <a href="{% url 'catalog:edit' author.pk %}"
+                                   class="btn btn-sm btn-outline-warning me-2">Изменить</a>
+                                <a href="{% url 'catalog:delete' author.pk %}"
+                                   class="btn btn-sm btn-outline-danger ms-2">Удалить</a>
                             </div>
                         </li>
                     {% endfor %}
@@ -27,16 +29,16 @@
             <div class="col-8">
                 <h3 class="text-center text-warning mt-4">Добавить автора</h3>
                 <form action="{% url 'catalog:create' %}" method="post"
-                      class="border border-3 rounded-3 border-info my-3">
+                      class="border border-3 rounded-3 border-info my-3" onsubmit="return validate(this)">
                     {% csrf_token %}
                     <div class="input-group my-3 px-1 px-lg-5">
                         <span class="input-group-text">Имя и фамилия автора</span>
-                        <input type="text" name="first_name" aria-label="Имя" class="form-control" required>
-                        <input type="text" name="last_name" aria-label="Фамилия" class="form-control" required>
+                        <input type="text" name="first_name" aria-label="Имя" class="form-control" >
+                        <input type="text" name="last_name" aria-label="Фамилия" class="form-control" >
                     </div>
                     <div class="row my-3 mx-2">
                         <div class="col-lg py-3 py-sm-3 py-md-3 py-lg-0">
-                            <input type="date" name="date_of_birth" class="form-control" required>
+                            <input type="date" name="date_of_birth" class="form-control" >
                         </div>
                         <div class="col-lg py-3 py-sm-3 py-md-3 py-lg-0">
                             <input type="date" name="date_of_death" class="form-control">
@@ -79,4 +81,51 @@
             </nav>
         </div>
     {% endif %}
+{% endblock %}
+{% block scripts_js %}
+    <script>
+        const form = document.querySelector("form")
+
+        function validate(form) {
+            let fail = validateForename(form.first_name.value)
+            fail += validateSurname(form.last_name.value)
+            fail += validateDateOfBirthday(form.date_of_birth.value)
+            if (!validateBirthdayDeath(form.date_of_birth.value, form.date_of_death.value) && form.date_of_death.value === '') {
+                fail += 'Дата рождения > дата смерти'
+            }
+            if (fail === '') {
+                return true
+            } else {
+                alert(fail)
+                return false
+            }
+        }
+
+        function validateForename(field) {
+            if (field === '') {
+                return "Не введено имя.\n"
+            } else if (/[^а-яА-Я]/.test(field)) {
+                return "В имени автора разрешены только а-я, А-Я.\n";
+            }
+            return "";
+        }
+
+        function validateSurname(field) {
+            if (field === '') {
+                return 'Не введена фамилия. \n'
+            } else if (/[^а-яА-Я]/.test(field)) {
+                return "В фамилии автора разрешены только а-я, А-Я.\n";
+            }
+            return ''
+        }
+        function validateDateOfBirthday(field) {
+            if (field === '') {
+                return 'Не выбрана дата рождения. \n'
+            }
+            return ''
+        }
+        function validateBirthdayDeath(birthday, death) {
+            return birthday <= death;
+        }
+    </script>
 {% endblock %}

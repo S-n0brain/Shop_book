@@ -106,7 +106,8 @@ def delete_author(request, pk):
     try:
         author = Author.objects.get(pk=pk)
     except Author.DoesNotExist:
-        return HttpResponseNotFound("""<script>
+        return HttpResponseNotFound("""
+                <script>
                 alert('Такого id автора не существует!')
                 </script>""")
     else:
